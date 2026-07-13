@@ -407,6 +407,18 @@ h1 {
   margin: 0.2rem 0;
 }
 
+.footer-bottom {
+  margin-top: 1rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid rgba(28, 27, 25, 0.14);
+  text-align: center;
+}
+
+.footer-bottom a {
+  color: var(--engine-red-dark);
+  font-weight: 700;
+}
+
 @media (max-width: 900px) {
   .hero-grid,
   .footer-grid {
