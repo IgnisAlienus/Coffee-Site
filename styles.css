@@ -329,6 +329,7 @@ h1 {
 .hours-list li {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
   gap: 0.75rem;
   padding: 0.4rem 0;
   border-bottom: 1px dashed rgba(28, 27, 25, 0.2);
@@ -433,6 +434,10 @@ h1 {
 
   .nav-wrap {
     min-height: 70px;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    padding: 0.75rem 0;
   }
 
   .brand-name {
@@ -448,8 +453,36 @@ h1 {
     padding-top: 1rem;
   }
 
+  .brand {
+    justify-content: center;
+  }
+
+  .brand-text {
+    min-width: 0;
+  }
+
+  .order-btn,
+  .hero-actions .primary-btn,
+  .hero-actions .ghost-btn {
+    width: 100%;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+  }
+
   .hero-logo-large {
     width: min(100%, 240px);
+  }
+
+  .main-frame {
+    min-height: 220px;
+  }
+
+  .hours-list li,
+  .social-list li {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .split-grid {
