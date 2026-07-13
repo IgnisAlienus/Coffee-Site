@@ -61,32 +61,49 @@ body {
 }
 
 .top-announcement {
-  background: linear-gradient(
-    120deg,
-    var(--engine-red),
-    var(--engine-red-dark)
-  );
+  background:
+    repeating-linear-gradient(
+      -45deg,
+      rgba(0, 0, 0, 0.16) 0,
+      rgba(0, 0, 0, 0.16) 12px,
+      rgba(0, 0, 0, 0) 12px,
+      rgba(0, 0, 0, 0) 24px
+    ),
+    linear-gradient(120deg, #ca2328, #8a151a);
   color: #fff;
-  border-bottom: 2px solid rgba(0, 0, 0, 0.15);
+  border-top: 2px solid rgba(0, 0, 0, 0.2);
+  border-bottom: 3px solid #000;
+  box-shadow: 0 8px 20px rgba(132, 23, 27, 0.38);
 }
 
 .top-announcement-inner {
-  padding: 0.75rem 0;
+  padding: 0.9rem 0;
   text-align: center;
 }
 
 .announcement-title {
-  margin: 0;
+  margin: 0 auto;
   font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(1.5rem, 3.5vw, 2.1rem);
-  letter-spacing: 0.06em;
+  font-size: clamp(1.7rem, 4vw, 2.5rem);
+  letter-spacing: 0.08em;
   line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.85rem;
+  border-radius: 999px;
+  color: #1c1b19;
+  background: linear-gradient(180deg, #ffd457, #f3a303);
+  border: 2px solid rgba(0, 0, 0, 0.36);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.28);
 }
 
 .announcement-text {
-  margin: 0.25rem 0 0;
-  font-weight: 700;
-  font-size: clamp(0.95rem, 2.1vw, 1.1rem);
+  margin: 0.42rem 0 0;
+  font-weight: 800;
+  font-size: clamp(1rem, 2.3vw, 1.25rem);
+  letter-spacing: 0.01em;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
 }
 
 .nav-wrap {
