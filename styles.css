@@ -166,6 +166,13 @@ body {
   animation: riseFade 700ms ease-out both;
 }
 
+.hero-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.8rem;
+}
+
 .kicker {
   display: inline-flex;
   align-items: center;
@@ -174,7 +181,7 @@ body {
   background: rgba(182, 32, 37, 0.12);
   color: var(--engine-red-dark);
   font-weight: 700;
-  margin: 0 0 0.8rem;
+  margin: 0;
 }
 
 h1,
