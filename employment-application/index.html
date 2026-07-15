@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Employment Application | Firehouse Coffee Co.</title>
+    <meta
+      name="description"
+      content="View and complete the Firehouse Coffee Co. employment application PDF."
+    />
+    <link rel="icon" type="image/png" href="../Favicon.png" />
+    <style>
+      :root {
+        --ink: #1c1b19;
+        --cream: #f4efe8;
+        --red: #b62025;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        font-family: 'Outfit', 'Segoe UI', sans-serif;
+        color: var(--ink);
+        background: var(--cream);
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        padding: 0.8rem 1rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        background: rgba(244, 239, 232, 0.96);
+        backdrop-filter: blur(6px);
+      }
+
+      .brand {
+        margin: 0;
+        font-size: 1rem;
+      }
+
+      .actions {
+        display: flex;
+        gap: 0.55rem;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 38px;
+        padding: 0.5rem 0.85rem;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 700;
+      }
+
+      .btn-primary {
+        background: var(--red);
+        color: #fff;
+      }
+
+      .btn-ghost {
+        color: var(--ink);
+        border: 1px solid rgba(0, 0, 0, 0.25);
+      }
+
+      .viewer {
+        border: 0;
+        width: 100%;
+        height: calc(100dvh - 62px);
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <h1 class="brand">Employment Application</h1>
+      <nav class="actions" aria-label="Employment application actions">
+        <a class="btn btn-primary" href="../EmploymentApplication.pdf" download
+          >Download PDF</a
+        >
+        <a class="btn btn-ghost" href="../">Back to Site</a>
+      </nav>
+    </header>
+
+    <iframe
+      class="viewer"
+      src="../EmploymentApplication.pdf#view=FitH"
+      title="Firehouse Coffee Co. Employment Application PDF"
+    ></iframe>
+  </body>
+</html>
