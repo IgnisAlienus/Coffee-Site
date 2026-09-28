@@ -363,6 +363,13 @@ h1 {
   animation: riseFade 620ms ease-out both;
 }
 
+.menu-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.65rem;
+}
+
 .panel:nth-of-type(2) {
   animation-delay: 120ms;
 }
