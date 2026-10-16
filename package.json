@@ -1,0 +1,18 @@
+{
+  "name": "firehouse-coffee-site",
+  "private": true,
+  "scripts": {
+    "test": "deno test supabase/functions/ordering-api/",
+    "check": "deno check supabase/functions/ordering-api/index.ts",
+    "test:db": "node --test tests/database.test.mjs",
+    "test:client": "node --test tests/client.test.mjs",
+    "test:pages": "node --test tests/pages.test.mjs",
+    "build:pages": "node scripts/build-pages.mjs",
+    "supabase": "supabase"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.10",
+    "deno": "^2.5.4",
+    "supabase": "^2.50.0"
+  }
+}

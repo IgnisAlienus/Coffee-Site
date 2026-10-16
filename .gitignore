@@ -1,0 +1,9 @@
+node_modules/
+.env
+.env.*
+!.env.example
+supabase/.temp/
+supabase/.branches/
+supabase/functions/.env
+coverage/
+.pages-dist/

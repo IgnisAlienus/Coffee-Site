@@ -1,0 +1,12 @@
+project_id = "firehouse-coffee"
+
+[functions.ordering-api]
+verify_jwt = false
+
+[auth]
+site_url = "https://fhcoffee.co"
+enable_signup = false
+
+[auth.mfa.totp]
+enroll_enabled = true
+verify_enabled = true
