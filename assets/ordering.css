@@ -771,6 +771,22 @@ td > small {
   min-width: 0;
   overflow-wrap: anywhere;
 }
+.modifier-meta {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-inline-start: auto;
+  max-width: 100%;
+}
+.modifier-price {
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+.option-entry[data-stock-status='OUT_OF_STOCK'] > .option-label > .option-name {
+  color: var(--muted);
+}
 .option-label img {
   width: 40px;
   height: 40px;

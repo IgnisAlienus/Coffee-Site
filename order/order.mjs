@@ -87,12 +87,19 @@ function modifierDetails(groups, depth = 0, initialQuery = '') {
       options.replaceChildren();
       for (const option of matching) {
         const row = element('li', 'option-entry');
+        row.dataset.stockStatus = option.stockStatus || 'UNKNOWN';
         const label = element('div', 'option-label');
         if (option.photoUrl)
           label.append(photo(option.photoUrl, option.name, 'modifier-photo'));
         label.append(element('span', 'option-name', option.name));
         if (option.isDefault)
           label.append(element('small', 'badge', 'Default'));
+        const metadata = element('div', 'modifier-meta');
+        const price = modifierPriceLabel(option);
+        if (price) metadata.append(element('strong', 'modifier-price', price));
+        const stock = stockBadge(option.stockStatus);
+        if (stock) metadata.append(stock);
+        if (metadata.childElementCount) label.append(metadata);
         row.append(label);
         if (option.groups?.length) {
           const nestedQuery =
@@ -131,6 +138,12 @@ function modifierDetails(groups, depth = 0, initialQuery = '') {
     section.append(disclosure);
   }
   return section;
+}
+
+function modifierPriceLabel(option) {
+  const price = option.price ?? option.startingPrice;
+  return typeof price === 'number' && Number.isFinite(price) && Math.round(Math.abs(price) * 100) > 0
+    ? `${option.price == null ? 'Starting at: ' : ''}${money(price)}` : '';
 }
 
 function itemPrice(item) {

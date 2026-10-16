@@ -22,7 +22,11 @@ export type CatalogItem = {
 };
 export type CatalogModifierGroup = {
   id: string; name: string; minSelections: number; maxSelections: number | null;
-  options: { id: string; name: string; photoUrl: string | null; isDefault: boolean; groups: CatalogModifierGroup[] }[];
+  options: {
+    id: string; name: string; photoUrl: string | null; isDefault: boolean;
+    price: number | null; startingPrice: number | null; stockStatus: CatalogItem['stockStatus'];
+    groups: CatalogModifierGroup[];
+  }[];
 };
 export const MENU_ENTITY_TYPES = ['menu', 'group', 'item', 'modifierGroup', 'modifier'] as const;
 export type MenuEntityType = typeof MENU_ENTITY_TYPES[number];
