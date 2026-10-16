@@ -142,8 +142,11 @@ function modifierDetails(groups, depth = 0, initialQuery = '') {
 
 function modifierPriceLabel(option) {
   const price = option.price ?? option.startingPrice;
-  return typeof price === 'number' && Number.isFinite(price) && Math.round(Math.abs(price) * 100) > 0
-    ? `${option.price == null ? 'Starting at: ' : ''}${money(price)}` : '';
+  return typeof price === 'number' &&
+    Number.isFinite(price) &&
+    Math.round(Math.abs(price) * 100) > 0
+    ? `${option.price == null ? 'Starting at: ' : ''}${money(price)}`
+    : '';
 }
 
 function itemPrice(item) {

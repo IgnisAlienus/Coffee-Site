@@ -17,58 +17,211 @@ function assert(condition: unknown, message: string) {
   if (!condition) throw new Error(message);
 }
 
-Deno.test('modifier prices and stock include nested options without exposing inventory quantities', () => {
-  const visibility = ['TOAST_ONLINE_ORDERING'];
-  const payload = {
-    menus: [{ visibility, menuGroups: [{ visibility, menuItems: [{ guid: 'coffee', visibility, modifierGroupReferences: [1] }] }] }],
-    modifierGroupReferences: {
-      '1': { guid: 'flavors', visibility, pricingStrategy: 'NONE', modifierOptionReferences: [2, 3, 4, 5] },
-      '6': { guid: 'extras', visibility, pricingStrategy: 'NONE', modifierOptionReferences: [7] },
-    },
-    modifierOptionReferences: {
-      '2': { guid: 'vanilla-v2', multiLocationId: 'vanilla-stable', name: 'Vanilla', visibility, pricingStrategy: 'GROUP_PRICE', price: 0.75, modifierGroupReferences: [6] },
-      '3': { guid: 'free', name: 'No ice', visibility, pricingStrategy: 'BASE_PRICE', price: 0 },
-      '4': { guid: 'milk', name: 'Oat milk', visibility, pricingStrategy: 'BASE_PRICE', price: 1 },
-      '5': { guid: 'syrup', name: 'Syrup', visibility, pricingStrategy: 'MENU_SPECIFIC_PRICE', price: 0.5 },
-      '7': { guid: 'nested', name: 'Extra shot', visibility, pricingStrategy: 'BASE_PRICE', price: 1.5 },
-    },
-  };
-  const stock = [
-    { guid: 'old-vanilla', multiLocationId: 'vanilla-stable', status: 'QUANTITY', quantity: 4 },
-    { guid: 'milk', status: 'OUT_OF_STOCK', quantity: null },
-    { guid: 'nested', status: 'QUANTITY', quantity: 5 },
-  ];
-  const result = publicCatalog(payload, stock, true);
-  const options = result.menus[0].groups[0].items[0].modifierGroups[0].options;
-  assert(options[0].price === 0.75 && options[0].stockStatus === 'LIMITED', 'Group-resolved price and stable stock identity must be used');
-  assert(options[1].price === 0 && options[1].stockStatus === 'IN_STOCK', 'Free modifiers keep zero for omission in the UI');
-  assert(options[2].price === 1 && options[2].stockStatus === 'OUT_OF_STOCK', 'Sold-out modifiers remain visible with their price');
-  assert(options[3].price === 0.5 && options[3].stockStatus === 'IN_STOCK', 'Menu-specific modifier prices must be preserved');
-  assert(options[0].groups[0].options[0].price === 1.5 && options[0].groups[0].options[0].stockStatus === 'IN_STOCK', 'Nested modifiers must include price and stock');
-  assert(!JSON.stringify(result).includes('quantity'), 'Inventory counts must remain private');
-  assert(publicCatalog(payload, stock, false).menus[0].groups[0].items[0].modifierGroups[0].options.every(option => option.stockStatus === 'UNKNOWN'), 'Stale modifier stock must be unknown');
-});
+Deno.test(
+  'modifier prices and stock include nested options without exposing inventory quantities',
+  () => {
+    const visibility = ['TOAST_ONLINE_ORDERING'];
+    const payload = {
+      menus: [
+        {
+          visibility,
+          menuGroups: [
+            {
+              visibility,
+              menuItems: [
+                { guid: 'coffee', visibility, modifierGroupReferences: [1] },
+              ],
+            },
+          ],
+        },
+      ],
+      modifierGroupReferences: {
+        '1': {
+          guid: 'flavors',
+          visibility,
+          pricingStrategy: 'NONE',
+          modifierOptionReferences: [2, 3, 4, 5],
+        },
+        '6': {
+          guid: 'extras',
+          visibility,
+          pricingStrategy: 'NONE',
+          modifierOptionReferences: [7],
+        },
+      },
+      modifierOptionReferences: {
+        '2': {
+          guid: 'vanilla-v2',
+          multiLocationId: 'vanilla-stable',
+          name: 'Vanilla',
+          visibility,
+          pricingStrategy: 'GROUP_PRICE',
+          price: 0.75,
+          modifierGroupReferences: [6],
+        },
+        '3': {
+          guid: 'free',
+          name: 'No ice',
+          visibility,
+          pricingStrategy: 'BASE_PRICE',
+          price: 0,
+        },
+        '4': {
+          guid: 'milk',
+          name: 'Oat milk',
+          visibility,
+          pricingStrategy: 'BASE_PRICE',
+          price: 1,
+        },
+        '5': {
+          guid: 'syrup',
+          name: 'Syrup',
+          visibility,
+          pricingStrategy: 'MENU_SPECIFIC_PRICE',
+          price: 0.5,
+        },
+        '7': {
+          guid: 'nested',
+          name: 'Extra shot',
+          visibility,
+          pricingStrategy: 'BASE_PRICE',
+          price: 1.5,
+        },
+      },
+    };
+    const stock = [
+      {
+        guid: 'old-vanilla',
+        multiLocationId: 'vanilla-stable',
+        status: 'QUANTITY',
+        quantity: 4,
+      },
+      { guid: 'milk', status: 'OUT_OF_STOCK', quantity: null },
+      { guid: 'nested', status: 'QUANTITY', quantity: 5 },
+    ];
+    const result = publicCatalog(payload, stock, true);
+    const options =
+      result.menus[0].groups[0].items[0].modifierGroups[0].options;
+    assert(
+      options[0].price === 0.75 && options[0].stockStatus === 'LIMITED',
+      'Group-resolved price and stable stock identity must be used',
+    );
+    assert(
+      options[1].price === 0 && options[1].stockStatus === 'IN_STOCK',
+      'Free modifiers keep zero for omission in the UI',
+    );
+    assert(
+      options[2].price === 1 && options[2].stockStatus === 'OUT_OF_STOCK',
+      'Sold-out modifiers remain visible with their price',
+    );
+    assert(
+      options[3].price === 0.5 && options[3].stockStatus === 'IN_STOCK',
+      'Menu-specific modifier prices must be preserved',
+    );
+    assert(
+      options[0].groups[0].options[0].price === 1.5 &&
+        options[0].groups[0].options[0].stockStatus === 'IN_STOCK',
+      'Nested modifiers must include price and stock',
+    );
+    assert(
+      !JSON.stringify(result).includes('quantity'),
+      'Inventory counts must remain private',
+    );
+    assert(
+      publicCatalog(
+        payload,
+        stock,
+        false,
+      ).menus[0].groups[0].items[0].modifierGroups[0].options.every(
+        (option) => option.stockStatus === 'UNKNOWN',
+      ),
+      'Stale modifier stock must be unknown',
+    );
+  },
+);
 
-Deno.test('included defaults do not show a surcharge and conditional group prices are not invented', () => {
-  const visibility = ['TOAST_ONLINE_ORDERING'];
-  const payload = {
-    menus: [{ visibility, menuGroups: [{ visibility, menuItems: [{ guid: 'coffee', visibility, modifierGroupReferences: [1, 2] }] }] }],
-    modifierGroupReferences: {
-      '1': { guid: 'defaults', visibility, pricingStrategy: 'NONE', defaultOptionsChargePrice: 'NO', modifierOptionReferences: [3, 4, 5] },
-      '2': { guid: 'conditional', visibility, pricingStrategy: 'SEQUENCE_PRICE', modifierOptionReferences: [6] },
-    },
-    modifierOptionReferences: {
-      '3': { guid: 'included', visibility, isDefault: true, pricingStrategy: 'BASE_PRICE', price: 1 },
-      '4': { guid: 'charged', visibility, isDefault: true, shouldChargePrice: true, pricingStrategy: 'BASE_PRICE', price: 1 },
-      '5': { guid: 'free-default', visibility, isDefault: true, shouldChargePrice: false, pricingStrategy: 'BASE_PRICE', price: 1 },
-      '6': { guid: 'conditional-option', visibility, pricingStrategy: 'GROUP_PRICE', price: 99 },
-    },
-  };
-  const groups = publicCatalog(payload).menus[0].groups[0].items[0].modifierGroups;
-  assert(groups[0].options[0].price === 0 && groups[0].options[2].price === 0, 'Included defaults must not imply an extra charge');
-  assert(groups[0].options[1].price === 1, 'An explicit default charging override takes precedence');
-  assert(groups[1].options[0].price === null && groups[1].options[0].startingPrice === null, 'Sequence-dependent prices must not become a fixed price');
-});
+Deno.test(
+  'included defaults do not show a surcharge and conditional group prices are not invented',
+  () => {
+    const visibility = ['TOAST_ONLINE_ORDERING'];
+    const payload = {
+      menus: [
+        {
+          visibility,
+          menuGroups: [
+            {
+              visibility,
+              menuItems: [
+                { guid: 'coffee', visibility, modifierGroupReferences: [1, 2] },
+              ],
+            },
+          ],
+        },
+      ],
+      modifierGroupReferences: {
+        '1': {
+          guid: 'defaults',
+          visibility,
+          pricingStrategy: 'NONE',
+          defaultOptionsChargePrice: 'NO',
+          modifierOptionReferences: [3, 4, 5],
+        },
+        '2': {
+          guid: 'conditional',
+          visibility,
+          pricingStrategy: 'SEQUENCE_PRICE',
+          modifierOptionReferences: [6],
+        },
+      },
+      modifierOptionReferences: {
+        '3': {
+          guid: 'included',
+          visibility,
+          isDefault: true,
+          pricingStrategy: 'BASE_PRICE',
+          price: 1,
+        },
+        '4': {
+          guid: 'charged',
+          visibility,
+          isDefault: true,
+          shouldChargePrice: true,
+          pricingStrategy: 'BASE_PRICE',
+          price: 1,
+        },
+        '5': {
+          guid: 'free-default',
+          visibility,
+          isDefault: true,
+          shouldChargePrice: false,
+          pricingStrategy: 'BASE_PRICE',
+          price: 1,
+        },
+        '6': {
+          guid: 'conditional-option',
+          visibility,
+          pricingStrategy: 'GROUP_PRICE',
+          price: 99,
+        },
+      },
+    };
+    const groups =
+      publicCatalog(payload).menus[0].groups[0].items[0].modifierGroups;
+    assert(
+      groups[0].options[0].price === 0 && groups[0].options[2].price === 0,
+      'Included defaults must not imply an extra charge',
+    );
+    assert(
+      groups[0].options[1].price === 1,
+      'An explicit default charging override takes precedence',
+    );
+    assert(
+      groups[1].options[0].price === null &&
+        groups[1].options[0].startingPrice === null,
+      'Sequence-dependent prices must not become a fixed price',
+    );
+  },
+);
 
 const now = Date.parse('2026-10-15T12:00:00Z');
 const snapshots: Snapshot[] = SOURCES.map((source) => ({

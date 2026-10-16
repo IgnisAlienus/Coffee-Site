@@ -1,6 +1,19 @@
-export const SOURCES = ['menus', 'diningOptions', 'schedule', 'availability', 'stock', 'restaurant', 'taxRates', 'serviceCharges'] as const;
-export type Source = typeof SOURCES[number];
-export type SourceFreshness = { source: Source; fetchedAt: string | null; stale: boolean };
+export const SOURCES = [
+  'menus',
+  'diningOptions',
+  'schedule',
+  'availability',
+  'stock',
+  'restaurant',
+  'taxRates',
+  'serviceCharges',
+] as const;
+export type Source = (typeof SOURCES)[number];
+export type SourceFreshness = {
+  source: Source;
+  fetchedAt: string | null;
+  stale: boolean;
+};
 export type OrderingStatus = {
   apiVersion: 'v1';
   mode: 'read_only';
@@ -21,37 +34,80 @@ export type CatalogItem = {
   stockStatus: 'IN_STOCK' | 'OUT_OF_STOCK' | 'LIMITED' | 'UNKNOWN';
 };
 export type CatalogModifierGroup = {
-  id: string; name: string; minSelections: number; maxSelections: number | null;
+  id: string;
+  name: string;
+  minSelections: number;
+  maxSelections: number | null;
   options: {
-    id: string; name: string; photoUrl: string | null; isDefault: boolean;
-    price: number | null; startingPrice: number | null; stockStatus: CatalogItem['stockStatus'];
+    id: string;
+    name: string;
+    photoUrl: string | null;
+    isDefault: boolean;
+    price: number | null;
+    startingPrice: number | null;
+    stockStatus: CatalogItem['stockStatus'];
     groups: CatalogModifierGroup[];
   }[];
 };
-export const MENU_ENTITY_TYPES = ['menu', 'group', 'item', 'modifierGroup', 'modifier'] as const;
-export type MenuEntityType = typeof MENU_ENTITY_TYPES[number];
+export const MENU_ENTITY_TYPES = [
+  'menu',
+  'group',
+  'item',
+  'modifierGroup',
+  'modifier',
+] as const;
+export type MenuEntityType = (typeof MENU_ENTITY_TYPES)[number];
 export type MenuOverride = {
-  entity_type: MenuEntityType; entity_id: string; display_name: string | null;
-  hidden: boolean; photo_url: string | null;
+  entity_type: MenuEntityType;
+  entity_id: string;
+  display_name: string | null;
+  hidden: boolean;
+  photo_url: string | null;
 };
-export type MenuGroup = { id: string; name: string; items: CatalogItem[]; groups: MenuGroup[] };
+export type MenuGroup = {
+  id: string;
+  name: string;
+  items: CatalogItem[];
+  groups: MenuGroup[];
+};
 export type Catalog = OrderingStatus & {
   restaurantTimeZone: string;
   menus: { id: string; name: string; groups: MenuGroup[] }[];
 };
-export type StaffProfile = { id: string; role: 'employee' | 'manager'; mfaRequired: boolean };
-export type OrderStatus = 'draft' | 'submitting' | 'accepted' | 'unknown' | 'failed' | 'cancelled';
+export type StaffProfile = {
+  id: string;
+  role: 'employee' | 'manager';
+  mfaRequired: boolean;
+};
+export type OrderStatus =
+  | 'draft'
+  | 'submitting'
+  | 'accepted'
+  | 'unknown'
+  | 'failed'
+  | 'cancelled';
 export type OrderSummary = {
   id: string;
   toast_order_guid: string | null;
   status: OrderStatus;
-  payment_status: 'not_started' | 'authorized' | 'captured' | 'voided' | 'failed' | 'refunded';
+  payment_status:
+    | 'not_started'
+    | 'authorized'
+    | 'captured'
+    | 'voided'
+    | 'failed'
+    | 'refunded';
   customer_name: string | null;
   total_minor: number;
   currency: string;
   created_at: string;
 };
-export type OrdersPage = { orders: OrderSummary[]; total: number; page: number; pageSize: number };
+export type OrdersPage = {
+  orders: OrderSummary[];
+  total: number;
+  page: number;
+  pageSize: number;
+};
 export type OrderEvent = {
   id: number;
   order_id: string;
@@ -68,5 +124,6 @@ export type OrderEvent = {
   fulfillment_reference: string | null;
 };
 export type ApiEnvelope<Value> = { apiVersion: 'v1'; requestId: string } & (
-  { data: Value } | { error: { code: string; message: string } }
+  | { data: Value }
+  | { error: { code: string; message: string } }
 );

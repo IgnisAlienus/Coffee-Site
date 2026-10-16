@@ -93,16 +93,35 @@ function startingPrice(item: RecordValue, root: RecordValue): number | null {
   return Math.min(...options.map((option) => Number(option.price)));
 }
 
-function modifierPrice(option: RecordValue, group: RecordValue, root: RecordValue) {
-  const includedDefault = option.isDefault === true &&
+function modifierPrice(
+  option: RecordValue,
+  group: RecordValue,
+  root: RecordValue,
+) {
+  const includedDefault =
+    option.isDefault === true &&
     (option.shouldChargePrice === false ||
-      (option.shouldChargePrice !== true && group.defaultOptionsChargePrice === 'NO'));
+      (option.shouldChargePrice !== true &&
+        group.defaultOptionsChargePrice === 'NO'));
   if (includedDefault) return { price: 0, startingPrice: 0 };
-  const fixed = ['BASE_PRICE', 'MENU_SPECIFIC_PRICE'].includes(text(option.pricingStrategy)) ||
-    (option.pricingStrategy === 'GROUP_PRICE' && group.pricingStrategy === 'NONE');
-  const price = fixed && typeof option.price === 'number' && Number.isFinite(option.price)
-    ? option.price : null;
-  return { price, startingPrice: price ?? (option.pricingStrategy === 'SIZE_PRICE' ? startingPrice(option, root) : null) };
+  const fixed =
+    ['BASE_PRICE', 'MENU_SPECIFIC_PRICE'].includes(
+      text(option.pricingStrategy),
+    ) ||
+    (option.pricingStrategy === 'GROUP_PRICE' &&
+      group.pricingStrategy === 'NONE');
+  const price =
+    fixed && typeof option.price === 'number' && Number.isFinite(option.price)
+      ? option.price
+      : null;
+  return {
+    price,
+    startingPrice:
+      price ??
+      (option.pricingStrategy === 'SIZE_PRICE'
+        ? startingPrice(option, root)
+        : null),
+  };
 }
 
 export function publicCatalog(
@@ -171,8 +190,12 @@ export function publicCatalog(
   }
   function stockStatus(item: RecordValue): CatalogItem['stockStatus'] {
     if (!stockFresh) return 'UNKNOWN';
-    const inventory = stock.find((entry) => text(item.multiLocationId) && entry.multiLocationId === item.multiLocationId) ??
-      stock.find((entry) => text(item.guid) && entry.guid === item.guid);
+    const inventory =
+      stock.find(
+        (entry) =>
+          text(item.multiLocationId) &&
+          entry.multiLocationId === item.multiLocationId,
+      ) ?? stock.find((entry) => text(item.guid) && entry.guid === item.guid);
     if (!text(item.guid) && !text(item.multiLocationId)) return 'UNKNOWN';
     if (!inventory) return 'IN_STOCK';
     if (inventory.status === 'OUT_OF_STOCK') return 'OUT_OF_STOCK';
