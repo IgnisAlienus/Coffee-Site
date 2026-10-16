@@ -4,11 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Order | Firehouse Coffee Co.</title>
-    <meta name="description" content="Browse the Firehouse Coffee Co. menu and order coffee for pickup in Spicewood, Texas." />
+    <meta
+      name="description"
+      content="Browse the Firehouse Coffee Co. menu and order coffee for pickup in Spicewood, Texas."
+    />
     <link rel="icon" href="../Favicon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Bebas+Neue&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="../assets/ordering.css" />
     <script src="../assets/config.js"></script>
     <script type="module" src="./order.mjs"></script>
@@ -17,39 +23,140 @@
     <a class="skip" href="#main">Skip to menu</a>
     <header class="site-bar">
       <div class="shell bar-inner">
-        <a class="brand" href="../"><img src="../Firehouse Coffee Co Logo.png" alt="" /><span><strong>Firehouse Coffee Co.</strong><small>Spicewood, Texas</small></span></a>
-        <a class="button button-quiet" href="../"><i data-lucide="arrow-left" aria-hidden="true"></i> Back to Site</a>
+        <a class="brand" href="../"
+          ><img src="../Firehouse Coffee Co Logo.png" alt="" /><span
+            ><strong>Firehouse Coffee Co.</strong
+            ><small>Spicewood, Texas</small></span
+          ></a
+        >
+        <a class="button button-quiet" href="../"
+          ><i data-lucide="arrow-left" aria-hidden="true"></i> Back to Site</a
+        >
       </div>
     </header>
     <section class="intro">
       <div class="shell intro-inner">
-        <div><p class="eyebrow">Station 71 / Drive-Thru Pickup</p><h1>Firehouse Coffee Co. Menu</h1><p>9330 E State Highway 71, Spicewood, TX</p></div>
-        <img class="shop-photo" src="../Building.png" alt="Firehouse Coffee Co. storefront" width="180" height="112" />
+        <div>
+          <p class="eyebrow">Station 71 / Drive-Thru Pickup</p>
+          <h1>Firehouse Coffee Co. Menu</h1>
+          <p>9330 E State Highway 71, Spicewood, TX</p>
+        </div>
+        <img
+          class="shop-photo"
+          src="../Firehouse Coffee Logo No Background.png"
+          alt="Firehouse Coffee Co. logo"
+          width="180"
+          height="180"
+        />
       </div>
     </section>
     <main class="shell workspace" id="main">
       <div class="notice">
-        <div><p><strong>Order ahead for pickup</strong></p><small>Complete your order and payment on Toast.</small></div>
-        <a class="button button-primary" href="https://order.toasttab.com/online/fhcoffeeco-station71">Order on Toast <i data-lucide="arrow-up-right" aria-hidden="true"></i></a>
+        <div>
+          <p><strong>Order ahead for pickup</strong></p>
+          <small>Complete your order and payment on Toast.</small>
+        </div>
+        <a
+          class="button button-primary"
+          href="https://order.toasttab.com/online/fhcoffeeco-station71"
+          >Order on Toast <i data-lucide="arrow-up-right" aria-hidden="true"></i
+        ></a>
       </div>
       <div class="toolbar">
-        <div class="search"><label class="muted" for="search" hidden>Search menu</label><i data-lucide="search" aria-hidden="true"></i><input id="search" type="search" aria-label="Search menu" placeholder="Search coffee, drinks, and more" disabled /></div>
-        <button class="icon-button" id="refresh" type="button" title="Refresh menu" aria-label="Refresh menu"><i data-lucide="refresh-cw" aria-hidden="true"></i></button>
+        <div class="search">
+          <label class="muted" for="search" hidden>Search menu</label
+          ><i data-lucide="search" aria-hidden="true"></i
+          ><input
+            id="search"
+            type="search"
+            aria-label="Search menu"
+            placeholder="Search coffee, drinks, and more"
+            disabled
+          />
+        </div>
+        <button
+          class="icon-button"
+          id="refresh"
+          type="button"
+          title="Refresh menu"
+          aria-label="Refresh menu"
+        >
+          <i data-lucide="refresh-cw" aria-hidden="true"></i>
+        </button>
       </div>
-      <p class="muted" id="menu-status" role="status" aria-live="polite">Loading menu...</p>
+      <p class="muted" id="menu-status" role="status" aria-live="polite"></p>
       <div class="alert" id="menu-warning" role="status" hidden></div>
-      <div class="menu-layout" id="menu-layout" hidden><nav class="categories" id="categories" aria-label="Menu categories"></nav><div id="menu-sections"></div></div>
-      <section class="empty" id="empty" hidden><h2 id="empty-title">Menu unavailable</h2><p id="empty-message">Please visit Toast for our current menu and pickup availability.</p><a class="button" href="../menu/">View Menu PDF</a></section>
-      <noscript><p>Please visit <a href="https://order.toasttab.com/online/fhcoffeeco-station71">Toast</a> for the menu and online ordering.</p></noscript>
+      <div class="menu-layout" id="menu-layout" hidden>
+        <nav
+          class="categories"
+          id="categories"
+          aria-label="Menu categories"
+        ></nav>
+        <div id="menu-sections"></div>
+      </div>
+      <section class="empty" id="empty" hidden>
+        <h2 id="empty-title">Menu unavailable</h2>
+        <p id="empty-message">
+          Please visit Toast for our current menu and pickup availability.
+        </p>
+        <a class="button" href="../menu/">View Menu PDF</a>
+      </section>
+      <noscript
+        ><p>
+          Please visit
+          <a href="https://order.toasttab.com/online/fhcoffeeco-station71"
+            >Toast</a
+          >
+          for the menu and online ordering.
+        </p></noscript
+      >
     </main>
-    <dialog id="item-dialog" class="item-dialog" aria-labelledby="item-dialog-name" aria-describedby="item-dialog-description">
+    <dialog
+      id="item-dialog"
+      class="item-dialog"
+      aria-labelledby="item-dialog-name"
+      aria-describedby="item-dialog-description"
+    >
       <header class="item-dialog-header">
-        <div><h2 id="item-dialog-name"></h2><p id="item-dialog-description" class="muted"></p><strong id="item-dialog-price" class="item-price" hidden></strong><div id="item-dialog-stock" hidden></div></div>
-        <button id="close-item-dialog" class="icon-button" type="button" title="Close item details" aria-label="Close item details"><i data-lucide="x" aria-hidden="true"></i></button>
+        <div>
+          <h2 id="item-dialog-name"></h2>
+          <p id="item-dialog-description" class="muted"></p>
+          <strong id="item-dialog-price" class="item-price" hidden></strong>
+          <div id="item-dialog-stock" hidden></div>
+        </div>
+        <button
+          id="close-item-dialog"
+          class="icon-button"
+          type="button"
+          title="Close item details"
+          aria-label="Close item details"
+        >
+          <i data-lucide="x" aria-hidden="true"></i>
+        </button>
       </header>
-      <div class="item-dialog-body"><div id="item-dialog-photo"></div><div id="item-dialog-options"></div></div>
-      <footer class="item-dialog-footer"><span id="item-dialog-order-note" class="muted">Choose options and complete your order on Toast.</span><a id="item-dialog-order" class="button button-primary" href="https://order.toasttab.com/online/fhcoffeeco-station71">Order on Toast <i data-lucide="arrow-up-right" aria-hidden="true"></i></a><button id="item-dialog-unavailable" type="button" disabled hidden>Out of Stock</button></footer>
+      <div class="item-dialog-body">
+        <div id="item-dialog-photo"></div>
+        <div id="item-dialog-options"></div>
+      </div>
+      <footer class="item-dialog-footer">
+        <span id="item-dialog-order-note" class="muted"
+          >Choose options and complete your order on Toast.</span
+        ><a
+          id="item-dialog-order"
+          class="button button-primary"
+          href="https://order.toasttab.com/online/fhcoffeeco-station71"
+          >Order on Toast
+          <i data-lucide="arrow-up-right" aria-hidden="true"></i></a
+        ><button id="item-dialog-unavailable" type="button" disabled hidden>
+          Out of Stock
+        </button>
+      </footer>
     </dialog>
-    <footer class="footer"><div class="shell footer-inner"><span>First responder and veteran owned.</span><a href="tel:8302014757">(830) 201-4757</a></div></footer>
+    <footer class="footer">
+      <div class="shell footer-inner">
+        <span>First responder and veteran owned.</span
+        ><a href="tel:8302014757">(830) 201-4757</a>
+      </div>
+    </footer>
   </body>
 </html>

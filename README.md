@@ -45,13 +45,13 @@ npx supabase db push
 
 4. Set these Edge Function secrets in the Supabase dashboard. Use the Toast API hostname assigned to your account; the example hostname is not a guarantee of your account's environment.
 
-| Secret | Value |
-| --- | --- |
-| `TOAST_API_BASE_URL` | Assigned HTTPS Toast API origin, without a path |
-| `TOAST_CLIENT_ID` | Toast client ID |
-| `TOAST_CLIENT_SECRET` | Toast client secret |
+| Secret                  | Value                                                                                                                                                            |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `TOAST_API_BASE_URL`    | Assigned HTTPS Toast API origin, without a path                                                                                                                  |
+| `TOAST_CLIENT_ID`       | Toast client ID                                                                                                                                                  |
+| `TOAST_CLIENT_SECRET`   | Toast client secret                                                                                                                                              |
 | `TOAST_RESTAURANT_GUID` | Optional for a single accessible location; required to select among multiple locations. Use Find Restaurants to look it up. Never use the management-group GUID. |
-| `ALLOWED_ORIGINS` | Comma-separated browser origins, e.g. `https://fhcoffee.co,http://127.0.0.1:4173` |
+| `ALLOWED_ORIGINS`       | Comma-separated browser origins, e.g. `https://fhcoffee.co,http://127.0.0.1:4173`                                                                                |
 
 Supabase supplies its project URL and service keys to the Edge Function. Both legacy environment keys and the newer named-key dictionaries are supported. Service keys never reach browser responses.
 
@@ -106,16 +106,16 @@ Managers enroll an authenticator at their first sign-in. Manager operational dat
 4. Select **Sync All**, or the refresh icon beside a single source, and review the results. A denied scope, upstream outage, or malformed response is logged using a sanitized code and HTTP status, never a token or raw upstream response. Discovery attempts are also recorded in connection logs.
 5. Check the customer menu and compare it with the restaurant's Toast menu. This initial preview uses `TOAST_ONLINE_ORDERING` visibility and excludes hidden parents and items. Confirm the channel required by Toast before enabling a custom ordering integration; ordering partners currently require V3 and `menus.channel:read`.
 
-| Source | Read endpoint |
-| --- | --- |
-| Menus | `/menus/v2/menus` |
-| Dining options | `/config/v2/diningOptions` |
-| Ordering schedule | `/ordermgmt-config/v1/published/orderingSchedule` |
-| Live availability | `/restaurant-availability/v1/availability` |
-| Stock exceptions | `/stock/v1/inventory` |
-| Restaurant information | `/restaurants/v1/restaurants/{guid}` |
-| Taxes | `/config/v2/taxRates` |
-| Service charges | `/config/v2/serviceCharges` |
+| Source                 | Read endpoint                                     |
+| ---------------------- | ------------------------------------------------- |
+| Menus                  | `/menus/v2/menus`                                 |
+| Dining options         | `/config/v2/diningOptions`                        |
+| Ordering schedule      | `/ordermgmt-config/v1/published/orderingSchedule` |
+| Live availability      | `/restaurant-availability/v1/availability`        |
+| Stock exceptions       | `/stock/v1/inventory`                             |
+| Restaurant information | `/restaurants/v1/restaurants/{guid}`              |
+| Taxes                  | `/config/v2/taxRates`                             |
+| Service charges        | `/config/v2/serviceCharges`                       |
 
 Configuration collections are paginated. All snapshots are private; the public catalog is an allowlisted projection. Full menu/modifier/schedule/configuration payloads are retained only in private snapshots for later order validation. Variable prices display "Starting at:" when a supported minimum is known. Size-price minimums use the linked, online-visible size options; base and menu-specific prices use their resolved price. Zero and unknown prices are omitted instead of guessed. These are browse-only starting amounts, not authoritative checkout totals. Item stock is matched by multi-location ID when available; stock does not reserve inventory or establish modifier availability.
 
@@ -123,10 +123,10 @@ Stock and live availability expire after two minutes; daily sources become stale
 
 ## Automatic synchronization
 
-| Sources | Schedule |
-| --- | --- |
+| Sources                                                                          | Schedule                                                  |
+| -------------------------------------------------------------------------------- | --------------------------------------------------------- |
 | Menus, dining options, ordering schedule, restaurant, tax rates, service charges | Once per daily cycle beginning at 2:00 AM America/Chicago |
-| Stock and restaurant availability | Approximately every minute |
+| Stock and restaurant availability                                                | Approximately every minute                                |
 
 Supabase `pg_cron` runs `firehouse-toast-sync` every minute. A database function queues an HTTP request using `pg_net`; the Edge Function then selects only due sources. Daily timing follows Central daylight-saving changes. On the spring-forward day, when 2am does not exist, daily work starts at 3am. Missed or failed daily work is caught up after the due time, not silently skipped until tomorrow. The live-source due interval has a small timing allowance, and the two-minute freshness limit permits normal cron/network jitter. Polling and rate-limit pauses are not a guarantee of real-time inventory.
 
@@ -163,7 +163,10 @@ New backend deployment requires migration `202610150002_menu_overrides.sql` befo
 The backend is independent of the website and is suitable for an Expo/React Native Android/iOS client. Reuse `shared/ordering-client.mjs`, its declarations, and `supabase/functions/_shared/contracts.ts`. The shared client has no DOM, window, or browser storage dependency. These are source modules in this repository, not yet a published npm package.
 
 ```typescript
-import { createOrderingClient, type Catalog } from './shared/ordering-client.mjs';
+import {
+  createOrderingClient,
+  type Catalog,
+} from './shared/ordering-client.mjs';
 
 const ordering = createOrderingClient({
   supabaseUrl: 'https://YOUR_PROJECT_REF.supabase.co',
@@ -178,21 +181,21 @@ Native UI screens will still need to be built; the website's HTML/CSS is not a n
 
 All responses use `{ apiVersion, requestId, data }` or `{ apiVersion, requestId, error: { code, message } }`. Use the response request ID to trace errors. Public endpoints accept a public project API key; staff endpoints additionally require the user's bearer token. Pagination is zero-based.
 
-| Method | Path after `/v1` | Access |
-| --- | --- | --- |
-| GET | `/status` | Public freshness and read-only flags |
-| GET | `/catalog` | Public menu projection; 503 before first successful menu sync |
-| GET | `/staff/me` | Active staff; indicates manager MFA requirement |
-| GET | `/staff/orders?page=0&status=failed` | Authorized staff; 25 per page |
-| GET | `/staff/orders/{id}` | Authorized staff |
-| GET | `/staff/orders/{id}/events?page=0` | Manager with MFA; latest 50 per page |
-| GET | `/staff/integrations?page=0` | Manager with MFA; latest 50 per page |
-| GET | `/staff/restaurants` | Manager with MFA; discover accessible Toast locations without a GUID |
-| GET | `/staff/menu` | Manager with MFA; imported entities, overrides, and latest 25 menu-change events |
-| POST | `/staff/menu/override` | Manager with MFA; validated JSON name, hide setting, photo URL |
-| POST | `/staff/menu/photo?entity_type=item&entity_id=ml:ID` | Manager with MFA; image bytes and matching image Content-Type; returns a public photo URL |
-| POST | `/staff/sync?source=stock` | Manager with MFA; one named source, or `all` (the default); Toast reads only |
-| POST | `/internal/sync` | Vault scheduler credential in `x-sync-token`; due sources only; not a staff/browser endpoint |
+| Method | Path after `/v1`                                     | Access                                                                                       |
+| ------ | ---------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| GET    | `/status`                                            | Public freshness and read-only flags                                                         |
+| GET    | `/catalog`                                           | Public menu projection; 503 before first successful menu sync                                |
+| GET    | `/staff/me`                                          | Active staff; indicates manager MFA requirement                                              |
+| GET    | `/staff/orders?page=0&status=failed`                 | Authorized staff; 25 per page                                                                |
+| GET    | `/staff/orders/{id}`                                 | Authorized staff                                                                             |
+| GET    | `/staff/orders/{id}/events?page=0`                   | Manager with MFA; latest 50 per page                                                         |
+| GET    | `/staff/integrations?page=0`                         | Manager with MFA; latest 50 per page                                                         |
+| GET    | `/staff/restaurants`                                 | Manager with MFA; discover accessible Toast locations without a GUID                         |
+| GET    | `/staff/menu`                                        | Manager with MFA; imported entities, overrides, and latest 25 menu-change events             |
+| POST   | `/staff/menu/override`                               | Manager with MFA; validated JSON name, hide setting, photo URL                               |
+| POST   | `/staff/menu/photo?entity_type=item&entity_id=ml:ID` | Manager with MFA; image bytes and matching image Content-Type; returns a public photo URL    |
+| POST   | `/staff/sync?source=stock`                           | Manager with MFA; one named source, or `all` (the default); Toast reads only                 |
+| POST   | `/internal/sync`                                     | Vault scheduler credential in `x-sync-token`; due sources only; not a staff/browser endpoint |
 
 ## Before accepting orders or payments
 
