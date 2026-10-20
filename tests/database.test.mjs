@@ -74,6 +74,107 @@ test('database enforces staff roles, MFA, private snapshots and append-only logs
     ])
       schedulerSql = schedulerSql.replace(extension, '');
     await database.exec(schedulerSql);
+    await database.exec(
+      await readFile(
+        new URL(
+          '../supabase/migrations/202610200005_outbound_sandbox.sql',
+          import.meta.url,
+        ),
+        'utf8',
+      ),
+    );
+    const sandboxTables = [
+      'restaurants',
+      'gift_cards',
+      'gift_card_transactions',
+      'loyalty_accounts',
+      'loyalty_transactions',
+    ];
+    await database.exec('set role anon;');
+    for (const table of sandboxTables)
+      await assert.rejects(
+        database.query(`select * from toast_sandbox.${table}`),
+        /permission denied/,
+      );
+    await assert.rejects(
+      database.query(
+        "select public.verify_toast_sandbox_key('giftcards', 'invalid')",
+      ),
+      /permission denied/,
+    );
+    await database.exec('reset role; set role authenticated;');
+    for (const table of sandboxTables)
+      await assert.rejects(
+        database.query(`select * from toast_sandbox.${table}`),
+        /permission denied/,
+      );
+    await assert.rejects(
+      database.query(
+        "select public.verify_toast_sandbox_key('loyalty', 'invalid')",
+      ),
+      /permission denied/,
+    );
+    await database.exec('reset role;');
+    const sandboxKeyRows = (
+      await database.query(
+        "select name, decrypted_secret from vault.decrypted_secrets where name in ('firehouse_toast_giftcards_sandbox_key', 'firehouse_toast_loyalty_sandbox_key')",
+      )
+    ).rows;
+    const giftKey = sandboxKeyRows.find(
+      (row) => row.name === 'firehouse_toast_giftcards_sandbox_key',
+    ).decrypted_secret;
+    const loyaltyKey = sandboxKeyRows.find(
+      (row) => row.name === 'firehouse_toast_loyalty_sandbox_key',
+    ).decrypted_secret;
+    assert.notEqual(giftKey, loyaltyKey);
+    await database.exec('set role service_role;');
+    assert.equal(
+      (
+        await database.query(
+          "select public.verify_toast_sandbox_key('giftcards', $1) as valid",
+          [giftKey],
+        )
+      ).rows[0].valid,
+      true,
+    );
+    assert.equal(
+      (
+        await database.query(
+          "select public.verify_toast_sandbox_key('loyalty', $1) as valid",
+          [loyaltyKey],
+        )
+      ).rows[0].valid,
+      true,
+    );
+    assert.equal(
+      (
+        await database.query(
+          "select public.verify_toast_sandbox_key('giftcards', $1) as valid",
+          [loyaltyKey],
+        )
+      ).rows[0].valid,
+      false,
+    );
+    assert.equal(
+      (
+        await database.query(
+          "select public.verify_toast_sandbox_key('unknown', $1) as valid",
+          [giftKey],
+        )
+      ).rows[0].valid,
+      false,
+    );
+    for (const table of sandboxTables)
+      assert.equal(
+        (
+          await database.query(
+            `select count(*) as count from toast_sandbox.${table}`,
+          )
+        ).rows[0].count,
+        0,
+        'Sandbox starts empty',
+      );
+    await database.exec('reset role;');
     const employee = '00000000-0000-4000-8000-000000000001';
     const manager = '00000000-0000-4000-8000-000000000002';
     const outsider = '00000000-0000-4000-8000-000000000003';

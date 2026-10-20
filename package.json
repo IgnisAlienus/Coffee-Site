@@ -2,8 +2,8 @@
   "name": "firehouse-coffee-site",
   "private": true,
   "scripts": {
-    "test": "deno test supabase/functions/ordering-api/",
-    "check": "deno check supabase/functions/ordering-api/index.ts",
+    "test": "deno test supabase/functions/ordering-api/ supabase/functions/_shared/",
+    "check": "deno check supabase/functions/ordering-api/index.ts supabase/functions/toast-giftcards-sandbox/index.ts supabase/functions/toast-loyalty-sandbox/index.ts",
     "test:db": "node --test tests/database.test.mjs",
     "test:client": "node --test tests/client.test.mjs",
     "test:pages": "node --test tests/pages.test.mjs",

@@ -12,6 +12,30 @@ The public website remains compatible with GitHub Pages. Supabase supplies Postg
 
 There is no custom cart, payment entry, order submission/retry worker, historical Toast order import, or production webhook in this phase. Read-only Toast data has an automatic synchronization worker with controlled retries. The order list starts empty. No sample orders or menu data are inserted. Read-only access never enables custom checkout.
 
+## Toast gift-card and loyalty sandbox endpoints
+
+These HTTPS endpoints are provisioned for the Toast write-access application only. They are onboarding scaffolding, not working or certified providers:
+
+| Provider   | Sandbox URL                                                    |
+| ---------- | -------------------------------------------------------------- |
+| Gift cards | `https://api.fhcoffee.co/functions/v1/toast-giftcards-sandbox` |
+| Loyalty    | `https://api.fhcoffee.co/functions/v1/toast-loyalty-sandbox`   |
+
+The `api.fhcoffee.co` Supabase custom domain and HTTPS certificate are active. Use the branded URLs above in the Toast application. The original project-host URLs remain available as aliases; GitHub Pages continues to serve `fhcoffee.co`, and the frontend's Supabase URL does not need to change. Domain activation does not enable gift-card/loyalty processing or imply Toast certification.
+
+Each endpoint accepts `GET`/`HEAD` status checks and `POST` requests. `GET` identifies the provider, reports `environment: sandbox`, `status: not_implemented`, and `transactionsEnabled: false`. Missing/invalid POST authentication returns HTTP 401. A correctly authenticated POST still returns HTTP 503 with an explicit not-implemented message. Neither endpoint ever returns `ACCEPT`, processes the request body, writes transactions, or changes balances, rewards, or orders. A successful status check is not a successful gift-card/loyalty transaction. Toast must confirm whether this provisioning stage is sufficient for initial sandbox access; do not describe it as ready for certification or transaction testing.
+
+Migration `202610200005_outbound_sandbox.sql` creates the private `toast_sandbox` schema with `restaurants`, `gift_cards`, `gift_card_transactions`, `loyalty_accounts`, and `loyalty_transactions` tables. They start empty, sandbox restaurants default to disabled, and there are no references to live orders or production balances. Browser roles have neither schema access nor table policies. This is logical isolation inside the existing Supabase project, not a separate project. Account/transaction structures are placeholders for future implementation; uniqueness constraints alone do not implement transaction idempotency or an accounting ledger.
+
+The migration generates two different authentication keys in Supabase Vault:
+
+- `firehouse_toast_giftcards_sandbox_key`
+- `firehouse_toast_loyalty_sandbox_key`
+
+Use the Supabase Dashboard Vault interface to retrieve these keys when Toast requests them, and transfer them using Toast's approved secure channel. Do not put the values in GitHub, frontend configuration, logs, README, or chat. The current outbound authentication guide specifies the exact static key in the HTTP `Authorization` header, not a Supabase bearer token. Older gift-card/loyalty API references mention JWTs; confirm the expected scheme with Toast before testing. Supabase gateway JWT checking is disabled for these functions specifically so the function can validate Toast's static key with a protected, service-role-only verification RPC. Gift-card keys cannot authenticate to the loyalty endpoint, or vice versa.
+
+Deploy the migration first, then deploy `toast-giftcards-sandbox` and `toast-loyalty-sandbox`. These are independent functions; existing `ordering-api` deployments and GitHub Pages do not publish them automatically. No new site links or GitHub secrets are needed. Keep production provider URLs and keys separate when those providers are eventually built. Before enabling transactions, implement restaurant allowlisting, transactional/idempotent accounting, reversals, request validation, redacted audit logs, and Toast's required response contracts, and verify the sub-500ms latency requirements and certification test plan.
+
 ## Local preview and checks
 
 Requires Node.js 20 or newer. Node dependencies include the Deno runtime, Supabase CLI, and an embedded PostgreSQL test runtime.
