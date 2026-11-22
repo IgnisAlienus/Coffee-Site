@@ -27,6 +27,7 @@ export const publicFiles = Object.freeze([
   'menu/index.html',
   'catering-menu/index.html',
   'employment-application/index.html',
+  'rewardsSignup/index.html',
   'order/index.html',
   'order/order.mjs',
   'admin/index.html',

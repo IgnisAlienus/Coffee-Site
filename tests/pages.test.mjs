@@ -34,12 +34,21 @@ test('Pages artifact includes only public files and preserves production routes'
       'menu/index.html',
       'catering-menu/index.html',
       'employment-application/index.html',
+      'rewardsSignup/index.html',
     ]) {
       assert.match(
         await readFile(join(output, path), 'utf8'),
         /<!doctype html>/i,
       );
     }
+    const rewardsRedirect = await readFile(
+      join(output, 'rewardsSignup/index.html'),
+      'utf8',
+    );
+    assert.match(
+      rewardsRedirect,
+      /https:\/\/www\.toasttab\.com\/fhcoffeeco-station71\/rewardsSignup/,
+    );
     assert.ok(
       !files.some((file) =>
         /(^|\/)(supabase|node_modules|tests|scripts|\.git|\.github)(\/|$)|\.env|\.sql$/.test(
