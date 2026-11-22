@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { test } from 'node:test';
+import { runInNewContext } from 'node:vm';
 import {
   artifactFiles,
   buildPages,
@@ -49,6 +50,35 @@ test('Pages artifact includes only public files and preserves production routes'
       rewardsRedirect,
       /https:\/\/www\.toasttab\.com\/fhcoffeeco-station71\/rewardsSignup/,
     );
+    const notFound = await readFile(join(output, '404.html'), 'utf8');
+    const redirectScript = notFound.match(/<script>([\s\S]*?)<\/script>/);
+    assert.ok(redirectScript);
+    for (const pathname of [
+      '/rewardssignup',
+      '/RewardsSignUp',
+      '/REWARDSSIGNUP/',
+    ]) {
+      let destination;
+      runInNewContext(redirectScript[1], {
+        window: {
+          location: { pathname, replace: (url) => { destination = url; } },
+        },
+      });
+      assert.equal(
+        destination,
+        'https://www.toasttab.com/fhcoffeeco-station71/rewardsSignup',
+      );
+    }
+    let redirected = false;
+    runInNewContext(redirectScript[1], {
+      window: {
+        location: {
+          pathname: '/rewardssignup/other',
+          replace: () => { redirected = true; },
+        },
+      },
+    });
+    assert.equal(redirected, false);
     assert.ok(
       !files.some((file) =>
         /(^|\/)(supabase|node_modules|tests|scripts|\.git|\.github)(\/|$)|\.env|\.sql$/.test(

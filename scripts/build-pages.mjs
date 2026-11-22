@@ -16,6 +16,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 export const publicFiles = Object.freeze([
   'CNAME',
   'index.html',
+  '404.html',
   'styles.css',
   'Building.png',
   'Favicon.png',
